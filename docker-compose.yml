@@ -1,0 +1,41 @@
+  version: '2'
+
+  services:
+      web:
+          image: nginx:latest
+          ports:
+              - "7070:80"
+          volumes:
+              - ..:/code
+              - ./web/site.conf:/etc/nginx/conf.d/default.conf
+      php_fpm:
+          build:
+              context: fpm
+              dockerfile: Dockerfile
+          volumes:
+              - ..:/code
+      mysql:
+          image: mysql:latest
+          environment:
+              - MYSQL_ROOT_PASSWORD=docker_super_secret_passwd
+    #   mongo:
+    #       build:
+    #         context: mongo
+    #         dockerfile: Dockerfile
+    #       volumes: 
+    #         - ./data:/data/db
+      mongodb:
+            image: mongo:3.2.9
+            container_name: mongo
+            restart: always
+            volumes:
+                - ../data/db/mongo:/data/db
+            ports:
+                - "27020:27017"
+            command: --storageEngine wiredTiger
+
+  # run
+  # docker-compose up
+  # and then open in browser
+  # http://localhost:8080/test.php
+  # or docker-compose -f docker-compose.yml up -d
